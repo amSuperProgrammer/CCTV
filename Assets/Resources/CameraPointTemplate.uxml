@@ -1,0 +1,6 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Style.uss?fileID=7433441132597879392&amp;guid=52b9df06eb05fd7438fbc902ac1c4c55&amp;type=3#Style" />
+    <engine:VisualElement name="VisualElement" class="hideButton" style="flex-grow: 0; background-color: rgb(255, 255, 255); width: 120px; height: 120px; border-top-width: 5px; border-right-width: 5px; border-bottom-width: 5px; border-left-width: 5px; border-left-color: rgb(0, 127, 255); border-right-color: rgb(0, 127, 255); border-top-color: rgb(0, 127, 255); border-bottom-color: rgb(0, 127, 255); transition-duration: 1s; transition-timing-function: ease-in-out-back; position: absolute;">
+        <engine:Label text="E&#10;" style="width: 110px; height: 100px; -unity-text-align: middle-center; font-size: 50px; -unity-font-style: bold;" />
+    </engine:VisualElement>
+</engine:UXML>
