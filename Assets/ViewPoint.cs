@@ -3,13 +3,20 @@ using UnityEngine.UIElements;
 
 public class ViewPoint : MonoBehaviour
 {
-    [Tooltip("If true, the camera will not rotate horizontally when the mouse is moved left or right.")]
+    [Tooltip("Блокирует поворот по горизонтали если поставлена галочка.")]
     public bool lockHorizontalRotation = false;
-    public float horizontalLockAngle = 45f;
-    [Space(20)]
-    [Tooltip("If true, the camera will not rotate vertically when the mouse is moved up or down.")]
-    public bool lockVerticalRotation = false;
-    public float verticalLockAngle = 45f;
+    [Range(0, 180)] public float horizontalMinAngle = 120f;
+    [Range(180, 360)] public float horizontalMaxAngle = 240f;
+    [Space(10)]
+    [Range(0, 90)] public float verticalMaxAngle = 45f;
+    [Range(-90, 0)] public float verticalMinAngle = -45f;
+
+
+    [Space(10)]
+    [Tooltip("Если включен то изменяет поворот точки, сохраняя текущий поворот камеры.")]
+    public bool savePointRotate = false;
+    public float fromToMoveSpeed = 5;
+    public float fromToRotateSpeed = 5;
 
     ViewManager _viewManager;
 
@@ -33,7 +40,8 @@ public class ViewPoint : MonoBehaviour
     private void LateUpdate()
     {
         float angle = Vector3.Angle(Camera.main.transform.forward, transform.position - Camera.main.transform.position);
-        pointButton.style.opacity = angle < _viewManager.buttonHideAngle && _viewManager.currentViewPoint != this ? 1 : 0;
+        pointButton.style.opacity = angle < _viewManager.buttonHideAngle ? 1 : 0;
+        pointButton.style.display = _viewManager.currentViewPoint != this ? DisplayStyle.Flex : DisplayStyle.None;
 
         Vector2 pointInScreen = (Vector2)Camera.main.WorldToScreenPoint(transform.position);
         cameraPoint.style.left = pointInScreen.x;

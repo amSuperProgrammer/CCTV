@@ -1,6 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Style.uss?fileID=7433441132597879392&amp;guid=52b9df06eb05fd7438fbc902ac1c4c55&amp;type=3#Style" />
-    <engine:VisualElement style="width: 1px; height: 1px; justify-content: center; position: absolute; top: auto; left: auto; right: auto; bottom: auto;">
+    <engine:VisualElement style="width: 0; height: 0; justify-content: center; position: absolute; top: auto; left: auto; right: auto; bottom: auto;">
         <engine:Button name="Button" style="width: 50px; height: 50px; background-color: rgb(255, 255, 255); border-left-color: rgb(0, 150, 255); border-right-color: rgb(0, 150, 255); border-top-color: rgb(0, 150, 255); border-bottom-color: rgb(0, 150, 255); align-items: center; justify-content: center; align-self: center; align-content: center; -unity-font-style: bold; font-size: 50px; transition-duration: 0.25s; transition-timing-function: ease-in-out-cubic;" />
     </engine:VisualElement>
 </engine:UXML>

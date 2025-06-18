@@ -1,24 +1,33 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Unity.Mathematics;
+using System;
+using Unity.VisualScripting;
 
 public class ViewManager : MonoBehaviour
 {
-    [SerializeField] List<ViewPoint> viewList = new List<ViewPoint>();
     public ViewPoint currentViewPoint;
-
+    [SerializeField] List<ViewPoint> viewList = new List<ViewPoint>();
     [SerializeField] float cameraSensivity = 60;
-    [SerializeField] float fromToMoveSpeed = 5;
-    [SerializeField] float fromToRotateSpeed = 5;
 
     public float buttonHideAngle = 45;
 
     private void Start()
     {
-        currentViewPoint = viewList[0];
+        if (currentViewPoint == null)
+            currentViewPoint = viewList[0];
 
         transform.position = currentViewPoint.transform.position;
         transform.rotation = currentViewPoint.transform.rotation;
+        
+        for (int i = 0; i < 360; i += 10)
+        {
+            int ii = i;
+            ii -= 180;
+            ii *= -1;
+            ii = Mathf.Clamp(ii, 60 - 180, 300 - 180);
+            ii += 180;
+            Debug.Log(ii);
+        }
     }
 
     private void Update()
@@ -34,40 +43,46 @@ public class ViewManager : MonoBehaviour
             ReBuildViewPointOrder();
         }
 
-        if (transform.position != currentViewPoint.transform.position)
+        if ((transform.position - currentViewPoint.transform.position).magnitude > 0.01f)
         {
-            transform.position = Vector3.Lerp(transform.position, currentViewPoint.transform.position, Time.deltaTime * fromToMoveSpeed);
-            transform.rotation = Quaternion.Lerp(transform.rotation, currentViewPoint.transform.rotation, Time.deltaTime * fromToRotateSpeed);
+            transform.position = Vector3.Lerp(transform.position, currentViewPoint.transform.position, Time.deltaTime * currentViewPoint.fromToMoveSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, currentViewPoint.transform.rotation, Time.deltaTime * currentViewPoint.fromToRotateSpeed);
         }
         else if (Input.GetMouseButton(1))
         {
-            float mouseX = Input.GetAxis("Mouse X");
-            mouseX = mouseX * Time.deltaTime * cameraSensivity;
-            float mouseY = -Input.GetAxis("Mouse Y");
-            mouseY = mouseY * Time.deltaTime * cameraSensivity;
+            float horizontalMouse = Input.GetAxis("Mouse X");
+            horizontalMouse = horizontalMouse * Time.deltaTime * cameraSensivity;
+            float verticalMouse = -Input.GetAxis("Mouse Y");
+            verticalMouse = verticalMouse * Time.deltaTime * cameraSensivity;
 
+#region  horizontalRotateClamp
             if (currentViewPoint.lockHorizontalRotation)
             {
-                float angle = Vector3.Angle(Camera.main.transform.forward, currentViewPoint.transform.forward);
-                Debug.Log($"Next angle: {angle - Mathf.Abs(mouseX)}");
-                // if (angle - Mathf.Abs(mouseX) < currentViewPoint.horizontalLockAngle)
-                    transform.Rotate(Vector3.up, mouseX, Space.World);
-            }
-            else
-                transform.Rotate(Vector3.up, mouseX, Space.World);
+                Vector3 horizontalEuler = transform.eulerAngles;
+                float newHorizontalRotate = horizontalEuler.y + horizontalMouse;
+                newHorizontalRotate = Mathf.Clamp(newHorizontalRotate, currentViewPoint.horizontalMinAngle, currentViewPoint.horizontalMaxAngle);
+                transform.eulerAngles = new Vector3(horizontalEuler.x, newHorizontalRotate, horizontalEuler.z);
+            } else transform.Rotate(Vector3.up, horizontalMouse, Space.World);
+#endregion
 
-            
-            if (currentViewPoint.lockVerticalRotation)
-            {
-                float angle = Vector3.Angle(Camera.main.transform.forward, currentViewPoint.transform.forward);
-                Debug.Log($"Next angle: {angle - Mathf.Abs(mouseY)}");
-                // if (angle - Mathf.Abs(mouseY) < currentViewPoint.verticalLockAngle)
-                    transform.Rotate(Vector3.right, mouseY);
-            }
-            else
-                transform.Rotate(Vector3.right, mouseY);
+#region verticalRotateClamp
+            Vector3 verticalEuler = transform.eulerAngles;
+            float verticalRotate = verticalEuler.x + verticalMouse;
+
+            if (verticalRotate < 180) verticalRotate *= -1;
+            else if (verticalRotate > 180) verticalRotate = 360 - verticalRotate;
+
+            verticalRotate = Mathf.Clamp(verticalRotate, currentViewPoint.verticalMinAngle, currentViewPoint.verticalMaxAngle);
+
+            if (verticalRotate < 0) verticalRotate *= -1;
+            else if (verticalRotate > 0) verticalRotate = 360 - verticalRotate;
+
+            transform.eulerAngles = new Vector3(verticalRotate, verticalEuler.y, verticalEuler.z);
+#endregion
+
+            if (currentViewPoint.savePointRotate)
+                currentViewPoint.transform.rotation = transform.rotation;
         }
-
     }
 
     public void PreviousViewPoint()
